@@ -1,10 +1,4 @@
-# This file is Copyright 2019 Volatility Foundation and licensed under the Volatility Software License 1.0
-# which is available at https://www.volatilityfoundation.org/license/vsl-v1.0
-#
-"""A module containing a collection of plugins that produce data typically
-found in Linux's /proc file system."""
 
-import logging
 from typing import List, Iterable
 from volatility3.cli import text_renderer, volshell
 from volatility3.framework import exceptions, renderers, constants, interfaces
@@ -15,8 +9,6 @@ from volatility3.framework.renderers import format_hints
 KPROBE_TABLE_SIZE = 64
 PTR_SIZE = 8
 UTF_8 = 'utf-8'
-##### PROBE_LIST #####
-##### FTRACE_EVENTS #####
 
 vollog = logging.getLogger(__name__)
 
@@ -69,12 +61,6 @@ class kprobes(interfaces.plugins.PluginInterface):
 
         
         vmlinux = context.modules[vmlinux_module_name]
-
-        #ftrace_events = vmlinux.object_from_symbol(symbol_name="ftrace_events").cast("list_head")
-       # table_name = ftrace_events.vol.type_name.split(constants.BANG)[0]
-       # for event in ftrace_events.to_list(table_name + constants.BANG + "ftrace_event_call", "list"):
-        #    event_name= utility.pointer_to_string(event.name,10)
-         #   print(event_name)
             
 
         kprobe_ptrs = []
@@ -109,11 +95,11 @@ class kprobes(interfaces.plugins.PluginInterface):
 
         except exceptions.SymbolError:
             vollog.debug(
-                "The required symbol 'module' is not present in symbol table. Please check that kernel modules are enabled for the system under analysis."
+                "The required symbol 'kprobe' is not present in symbol table. Please check that kernel modules are enabled for the system under analysis."
             )
 
     def run(self):
         return renderers.TreeGrid(
-            [("Addr                ", str), ("Symbol   ", str), ("pre_handler addr", str)],
+            [("Addr", str), ("Symbol ", str), ("pre_handler addr", str)],
             self._generator(),
         )
